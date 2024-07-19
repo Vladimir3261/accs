@@ -1,5 +1,6 @@
 const http = require('http');
 const config = require('./config.js');
+const controller = require('./controller.js');
 
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
@@ -15,16 +16,17 @@ function throwError(statusCode, message) {
     throw e;
 }
 
-async function switchController(switchId, state) {
-    // Implement controller switch here.
-}
-
 async function processPush(push) {
     for (const cnf of config) {
         if (cnf.package === push.package && push.title.includes(cnf.inTitle) && push.text.includes(cnf.inText)) {
             console.info(`${push.title} ${push.text} -> ${cnf.switch} = ${cnf.state}`);
             // Switch the controller here
-            switchController(cnf.switch, cnf.state).then(() => {
+            controller.switchDevice(cnf.switch, cnf.state).then(result => {
+                console.info('Switch result', result);
+
+                if (!result.success) {
+                    throw new Error('Switch failed');
+                }
                 console.info('Switched successfully');
             }).catch(e => {
                 console.error('Switch error', e);
