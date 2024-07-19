@@ -1,6 +1,5 @@
 const http = require('http');
 const config = require('./config.js');
-const controller = require('./controller.js');
 
 const apiKey = process.env.API_KEY;
 if (!apiKey) {
