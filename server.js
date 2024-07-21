@@ -55,7 +55,7 @@ async function processRequest(method, url, body) {
                 continue;
             }
 
-            const pushKey = `${push.package}:${push.title}:${push.text}`;
+            const pushKey = `${push.package}:${push.title}:${push.text}${push.time}`;
             if (receivedPushes[pushKey]) {
                 console.info('Push already received', pushKey);
                 continue;
