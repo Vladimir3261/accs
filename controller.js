@@ -9,10 +9,10 @@ const tuya = new TuyaContext({
 });
 
 module.exports = {
-    async switchDevice(switchId, state) {
+    async switchDevice(deviceId, switchId, state) {
         return await tuya.request({
             method: 'POST',
-            path: '/v1.0/iot-03/devices/bf5bbfd7dadcacda790o1m/commands',
+            path: `/v1.0/iot-03/devices/${deviceId}/commands`,
             body: {
                 "commands": [{"code": switchId, "value": state}]
             },
