@@ -21,7 +21,7 @@ async function processPush(push) {
         if (cnf.package === push.package && push.title.includes(cnf.inTitle) && push.text.includes(cnf.inText)) {
             console.info(`${push.title} ${push.text} -> ${cnf.switch} = ${cnf.state}`);
             // Switch the controller here
-            controller.switchDevice(cnf.switch, cnf.state).then(result => {
+            controller.switchDevice(cnf.device_id, cnf.switch, cnf.state).then(result => {
                 console.info('Switch result', result);
 
                 if (!result.success) {
