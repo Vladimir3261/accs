@@ -20,17 +20,35 @@ async function processPush(push) {
     for (const cnf of config) {
         if (cnf.package === push.package && push.title.includes(cnf.inTitle) && push.text.includes(cnf.inText)) {
             console.info(`${push.title} ${push.text} -> ${cnf.switch} = ${cnf.state}`);
-            // Switch the controller here
-            controller.switchDevice(cnf.device_id, cnf.switch, cnf.state).then(result => {
-                console.info('Switch result', result);
+            let timeout = 0;
 
-                if (!result.success) {
-                    throw new Error('Switch failed');
+            if (cnf.timeoutRegexp) {
+                const match = push.text.match(cnf.timeoutRegexp);
+                if (match) {
+                    const timeToSwitch = parseInt(match[1]) - 5; // 5 minutes before the actual time
+                    timeout = timeToSwitch * 60 * 1000; // minutes to milliseconds
                 }
-                console.info('Switched successfully');
-            }).catch(e => {
-                console.error('Switch error', e);
-            })
+            }
+
+            if (timeout && timeout > 0) {
+                console.info(`Timeout ${timeout / 1000 / 60} minutes`);
+            } else {
+                console.info('No timeout. Switching immediately');
+            }
+
+            setTimeout(() => {
+                // Switch the controller here
+                controller.switchDevice(cnf.device_id, cnf.switch, cnf.state).then(result => {
+                    console.info('Switch result', result);
+
+                    if (!result.success) {
+                        throw new Error('Switch failed');
+                    }
+                    console.info('Switched successfully');
+                }).catch(e => {
+                    console.error('Switch error', e);
+                })
+            }, timeout);
         }
     }
 }
